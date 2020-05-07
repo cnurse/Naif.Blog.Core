@@ -1,0 +1,32 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30028.174
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Naif.Blog.Core", "src\Naif.Blog.Core\Naif.Blog.Core.csproj", "{51DE84FC-C3A4-49C7-9A1F-9F04F5250A02}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{B379AB81-8687-4220-B9D9-71AF5636A46C}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+		azure-pipelines.yml = azure-pipelines.yml
+		README.md = README.md
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{51DE84FC-C3A4-49C7-9A1F-9F04F5250A02}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{51DE84FC-C3A4-49C7-9A1F-9F04F5250A02}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{51DE84FC-C3A4-49C7-9A1F-9F04F5250A02}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{51DE84FC-C3A4-49C7-9A1F-9F04F5250A02}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {28B5D123-5ED2-41E1-A8F3-76FD090F9CB2}
+	EndGlobalSection
+EndGlobal
