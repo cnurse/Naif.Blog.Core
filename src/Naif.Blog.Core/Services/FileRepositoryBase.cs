@@ -6,7 +6,7 @@ using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using System.IO;
 using System.Linq;
-using Naif.Blog.Framework;
+using Naif.Core.Cache;
 
 namespace Naif.Blog.Services
 {

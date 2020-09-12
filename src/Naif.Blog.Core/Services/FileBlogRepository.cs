@@ -8,7 +8,7 @@ using System.Linq;
 using Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Naif.Blog.Framework;
+using Naif.Core.Cache;
 using Newtonsoft.Json;
 // ReSharper disable ClassNeverInstantiated.Global
 
