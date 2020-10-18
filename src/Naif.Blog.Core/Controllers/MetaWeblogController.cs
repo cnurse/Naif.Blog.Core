@@ -18,20 +18,17 @@ namespace Naif.Blog.Controllers
     {
         private readonly IWebHostEnvironment _environment;
         private readonly XmlRpcSecurityOptions _securityOptions;
-        private readonly IPageRepository _pageRepository;
         private readonly IPostRepository _postRepository;
 
         public MetaWeblogController(IWebHostEnvironment environment,
             IBlogRepository blogRepository, 
             IBlogContext blogContext, 
-            IPageRepository pageRepository, 
             IPostRepository postRepository, 
             IOptions<XmlRpcSecurityOptions> optionsAccessor) 
             :base(blogRepository, blogContext)
         {
             _environment = environment;
             _securityOptions = optionsAccessor.Value;
-            _pageRepository = pageRepository;
             _postRepository = postRepository;
         }
 
@@ -214,141 +211,6 @@ namespace Naif.Blog.Controllers
             });
         }
         
-        private object CreatePage(Page page)
-        {
-            var info = new
-            {
-                description = page.Content,
-                title = page.Title,
-                dateCreated = page.PubDate,
-                wp_slug = page.Slug,
-                page_id = page.PageId,
-                wp_page_parent_id = page.ParentPageId
-            };
-
-            return info;
-        }
-
-        private IActionResult DeletePage(string blogId,  string userName, string password, string pageId)
-        {
-            return CheckSecurity(userName, password, () =>
-            {
-                Page page = _pageRepository.GetAllPages(Blog.Id).FirstOrDefault(p => p.PageId == pageId);
-
-                if (page != null)
-                {
-                    page.BlogId = Blog.Id;
-                    _pageRepository.DeletePage(page);
-                }
-
-                return new XmlRpcResult(page != null);
-            });
-        }
-
-        private IActionResult EditPage(string blogId, string pageId, string userName, string password, Page page, bool publish)
-        {
-            return CheckSecurity(userName, password, () =>
-            {
-                Page match = _pageRepository.GetAllPages(Blog.Id).FirstOrDefault(p => p.PageId == pageId);
-
-                if (match != null)
-                {
-                    match.Title = page.Title;
-                    match.Content = page.Content;
-
-                    if (!string.Equals(match.Slug, page.Slug, StringComparison.OrdinalIgnoreCase))
-                    {
-                        match.Slug = CreateSlug(page.Slug);
-                    }
-
-                    match.Keywords = page.Keywords;
-                    match.IsPublished = publish;
-
-                    _pageRepository.SavePage(match);
-                }
-
-                return new XmlRpcResult(match != null);
-            });
-        }
-
-        private IActionResult GetPage(string blogId, string pageId, string userName, string password)
-        {
-            return CheckSecurity(userName, password, () =>
-            {
-                var page = _pageRepository.GetAllPages(Blog.Id).FirstOrDefault(p => p.PageId == pageId);
-
-                return new XmlRpcResult(CreatePage(page));
-            });
-        }
-
-        private IActionResult GetPageList(string blogId, string userName, string password)
-        {
-            return CheckSecurity(userName, password, () =>
-            {
-                List<object> list = new List<object>();
-
-                foreach (var page in _pageRepository.GetAllPages(blogId))
-                {
-                    var info = new
-                    {
-                        page_title = page.Title,
-                        dateCreated = page.PubDate,
-                        page_id = page.PageId,
-                        wp_page_parent_id = page.ParentPageId
-                    };
-
-                    list.Add(info);
-                }
-
-                return new XmlRpcResult(list.ToArray());
-            });
-        }
-
-        private IActionResult GetPages(string blogId, string userName, string password, int numberOfPosts)
-        {
-            return CheckSecurity(userName, password, () =>
-            {
-                List<object> list = new List<object>();
-
-                foreach (var page in _pageRepository.GetAllPages(blogId).Take(numberOfPosts))
-                {
-                    list.Add(CreatePage(page));
-                }
-
-                return new XmlRpcResult(list.ToArray());
-            });
-        }
-
-        private IActionResult NewPage(string blogId, string userName, string password, Page page, bool publish)
-        {
-            return CheckSecurity(userName, password, () =>
-            {
-
-                try
-                {
-                    if (!string.IsNullOrWhiteSpace(page.Slug))
-                    {
-                        page.Slug = CreateSlug(page.Slug);
-                    }
-                    else
-                    {
-                        page.Slug = CreateSlug(page.Title);
-                    }
-                }
-                catch (Exception exc)
-                {
-                    return new XmlRpcResult(exc);
-                }
-
-                page.IsPublished = publish;
-                page.BlogId = blogId;
-                _pageRepository.SavePage(page);
-
-                return new XmlRpcResult(page.PageId);
-            });
-        }
-
-
         private IActionResult GetCategories(string blogId, string userName, string password)
         {
             return CheckSecurity(userName, password, () =>

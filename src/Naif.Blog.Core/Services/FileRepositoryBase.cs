@@ -26,7 +26,7 @@ namespace Naif.Blog.Services
 
         protected string RootFolder { get; }
 
-        protected void DeleteObject<T>(T obj, string id, string cacheKeyTemplate, string folder) where T : PostBase
+        protected void DeleteObject<T>(T obj, string id, string cacheKeyTemplate, string folder) where T : Post
         {
             var cacheKey = GetCacheKey(cacheKeyTemplate, obj.BlogId);
             var objFolder = GetFolder(folder, obj.BlogId);
@@ -48,7 +48,7 @@ namespace Naif.Blog.Services
             return string.Format(folderKey, RootFolder, blogId);
         }
         
-        protected IList<T> GetObjects<T>(string cacheKeyTemplate, string folderKey, string blogId, Func<string, string, T> func) where T : PostBase
+        protected IList<T> GetObjects<T>(string cacheKeyTemplate, string folderKey, string blogId, Func<string, string, T> func) where T : Post
         {
             var cacheKey = GetCacheKey(cacheKeyTemplate, blogId);
 
@@ -58,7 +58,7 @@ namespace Naif.Blog.Services
                                     () => GetObjects(folderKey, blogId, func).ToList());
         }
 
-        private IList<T> GetObjects<T>(string folder, string blogId, Func<string, string, T> func) where T : PostBase 
+        private IList<T> GetObjects<T>(string folder, string blogId, Func<string, string, T> func) where T : Post 
         {
             var objFolder = GetFolder(folder, blogId);
 
@@ -83,7 +83,7 @@ namespace Naif.Blog.Services
             return list;
         }
 
-        protected void SaveObject<T>(T obj, string id, string cacheKeyTemplate, string folder, Action<T, string> action) where T : PostBase 
+        protected void SaveObject<T>(T obj, string id, string cacheKeyTemplate, string folder, Action<T, string> action) where T : Post
         {
             var cacheKey = GetCacheKey(cacheKeyTemplate, obj.BlogId);
             var objFolder = GetFolder(folder, obj.BlogId);
