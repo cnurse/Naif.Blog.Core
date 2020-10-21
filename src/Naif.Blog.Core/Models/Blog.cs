@@ -10,6 +10,8 @@ namespace Naif.Blog.Models
         public string Disclaimer { get; set; }
 
         public string GoogleAnalytics { get; set; }
+        
+        public string HomeRedirectUrl { get; set; }
 
         public string Id { get; set; }
 
