@@ -2,16 +2,19 @@
 //https://michael-mckenna.com/implementing-xml-rpc-services-in-asp-net-mvc/
 using System;
 using System.Collections;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Xml.Linq;
+// ReSharper disable UsePatternMatching
 
 namespace Naif.Blog.XmlRpc
 {
     public static class XmlRpcData
     {
-        public static object DeserialiseValue(XElement value, Type targetType)
+        public static object DeserializeValue(XElement value, Type targetType)
         {
             //First check that we have a 'value' node that's been passed in
             if (!String.Equals(value.Name.LocalName, "value", StringComparison.OrdinalIgnoreCase))
@@ -56,7 +59,7 @@ namespace Naif.Blog.XmlRpc
                 int index = 0;
                 foreach (var entry in xElements)
                 {
-                    var propertyValue = DeserialiseValue(entry, targetType.GetElementType());
+                    var propertyValue = DeserializeValue(entry, targetType.GetElementType());
                     targetArray.SetValue(propertyValue, index);
                     index++;
                 }
@@ -69,34 +72,72 @@ namespace Naif.Blog.XmlRpc
                 var propertyInfos = targetType.GetProperties();
                 foreach (var member in members)
                 {
-                    foreach(var propertyInfo in propertyInfos)
+                    var memberName = member.Element("name").Value;
+                    
+                    //Special Processing for "custom_fields"
+                    if (memberName == "custom_fields")
                     {
-                        if(propertyInfo.Name == member.Element("name").Value)
+                        var propertyInfo = propertyInfos.Single(pi => pi.Name == "CustomFields");
+                        DeserializeCustomFields(propertyInfo, targetObject, member);
+                    }
+                    else
+                    {
+                        foreach(var propertyInfo in propertyInfos)
                         {
-                            SetPropertyValue(propertyInfo, targetObject, member);
-                        }
-                        else
-                        {
-                            var attribute = propertyInfo.GetCustomAttribute(typeof(XmlRpcPropertyAttribute));
-                            var xmlRpcAttribute = attribute as XmlRpcPropertyAttribute;
-                            if (xmlRpcAttribute != null && xmlRpcAttribute.Name == member.Element("name").Value)
+                            if(propertyInfo.Name == memberName)
                             {
                                 SetPropertyValue(propertyInfo, targetObject, member);
                             }
+                            else
+                            {
+                                var attribute = propertyInfo.GetCustomAttribute(typeof(XmlRpcPropertyAttribute));
+                                var xmlRpcAttribute = attribute as XmlRpcPropertyAttribute;
+                                if (xmlRpcAttribute != null && xmlRpcAttribute.Name == member.Element("name").Value)
+                                {
+                                    SetPropertyValue(propertyInfo, targetObject, member);
+                                }
+                            }
                         }
                     }
+                    
                 }
                 return targetObject;
             }
-            else
+
+            throw new ArgumentException(String.Format("The supplied XML-RPC value '{0}' is not recognised", dataType));
+        }
+
+        private static void DeserializeCustomFields(PropertyInfo propertyInfo, object targetObject, XElement member)
+        {
+            var customFields = new Dictionary<string, string>();
+            var values = member.Element("value").Element("array").Element("data").Elements("value");
+            foreach (var value in values)
             {
-                throw new ArgumentException(String.Format("The supplied XML-RPC value '{0}' is not recognised", dataType));
+                var dictionaryMembers = value.Element("struct").Elements("member");
+                
+                string dictionaryKey = String.Empty;
+                string dictionaryValue = String.Empty;
+                foreach (var dictionaryMember in dictionaryMembers)
+                {
+                    if (dictionaryMember.Element("name").Value == "key")
+                    {
+                        dictionaryKey = dictionaryMember.Element("value").Element("string").Value;
+                    }
+                    else
+                    {
+                        dictionaryValue = dictionaryMember.Element("value").Element("string").Value;
+                    }
+                }
+
+                customFields[dictionaryKey] = dictionaryValue;
             }
+
+            propertyInfo.SetValue(targetObject, customFields, null);           
         }
 
         private static void SetPropertyValue(PropertyInfo propertyInfo, object targetObject, XElement member)
         {
-            var propertyValue = DeserialiseValue(member.Element("value"), propertyInfo.PropertyType);
+            var propertyValue = DeserializeValue(member.Element("value"), propertyInfo.PropertyType);
             propertyInfo.SetValue(targetObject, propertyValue, null);
         }
 
@@ -115,6 +156,10 @@ namespace Naif.Blog.XmlRpc
             else if (value.GetType().IsArray)
             {
                 root.Add(SerialiseEnumerable(value as IEnumerable));
+            }
+            else if (value.GetType() == typeof(Dictionary<string, string>))
+            {
+                root.Add(SerializeCustomFields(value as Dictionary<string, string>));
             }
             else
             {
@@ -138,13 +183,44 @@ namespace Naif.Blog.XmlRpc
             {
                 XElement member = new XElement("member");
 
-                member.Add(
-                    new XElement("name", propInfo.Name), SerialiseValue(propInfo.GetValue(value, null)));
+                member.Add(new XElement("name", propInfo.Name), SerialiseValue(propInfo.GetValue(value, null)));
 
                 root.Add(member);
             }
 
             return root;
+        }
+
+        private static XElement SerializeCustomFields(Dictionary<string, string> customFields)
+        {
+            XElement dictionaryElement = new XElement("array");
+            XElement dataElement = new XElement("data");
+
+            foreach (var keyValuePair in customFields)
+            {
+                XElement keyValuePairElement = new XElement("value", 
+                                                new XElement("struct",
+                                                    new XElement("member",
+                                                        new XElement("name", "key"),
+                                                        new XElement("value",
+                                                            new XElement("string", keyValuePair.Key)
+                                                            )
+                                                        ),
+                                                    new XElement("member",
+                                                        new XElement("name", "value"),
+                                                        new XElement("value",
+                                                            new XElement("string", keyValuePair.Value)
+                                                            )
+                                                        )
+                                                    )
+                                                );
+                
+                dataElement.Add(keyValuePairElement);
+            }
+            
+            dictionaryElement.Add(dataElement);
+            
+            return dictionaryElement;
         }
 
         private static XElement SerialiseEnumerable(IEnumerable values)
@@ -203,6 +279,7 @@ namespace Naif.Blog.XmlRpc
             "yyyy-MM-ddTHH:mm:sszzz",
             "yyyy-MM-ddTHH:mm:sszz",
             "yyyy-MM-ddTHH:mm:ssZ",
+            "yyyy-MM-ddTHH:mm:ss",
             "yyyyMMddTHH:mm:ss:zzz",
             "yyyyMMddTHH:mm:ss:zz",
             "yyyyMMddTHH:mm:ss:Z",

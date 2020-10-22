@@ -52,7 +52,7 @@ namespace Naif.Blog.Framework
                         Type type = (method == "editPost" || method == "newPost") ? Type.GetType("Naif.Blog.Models.Post") :
                             (method == "newMediaObject") ? Type.GetType("Naif.Blog.Models.MediaObject") : null;
                         
-                        methodParams.Add(XmlRpcData.DeserialiseValue(xmlParam.Element("value"), type));
+                        methodParams.Add(XmlRpcData.DeserializeValue(xmlParam.Element("value"), type));
                     }
 
                     context.Items["Xml-Rpc-Document"] = xDoc;

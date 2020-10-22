@@ -66,7 +66,8 @@ namespace Naif.Blog.Controllers
                     result = NewMediaObject(methodParams[0].ToString(), methodParams[1].ToString(), methodParams[2].ToString(), (MediaObject)methodParams[3]);
                     break;
                 default:
-                    result = new XmlRpcResult(null);
+                    object nullObject = null;
+                    result = new XmlRpcResult(nullObject);
                     break;
             }
 
@@ -142,19 +143,7 @@ namespace Naif.Blog.Controllers
             {
                 var post = _postRepository.GetAllPosts(Blog.Id).FirstOrDefault(p => p.PostId == postId);
 
-                var info = new
-                {
-                    description = post.Content,
-                    title = post.Title,
-                    dateCreated = post.PubDate,
-                    wp_slug = post.Slug,
-                    categories = post.Categories.ToArray(),
-                    mt_keywords = post.Keywords,
-                    postid = post.PostId,
-                    mt_excerpt = post.Excerpt
-                };
-
-                return new XmlRpcResult(info);
+                return new XmlRpcResult(post);
             });
         }
 
@@ -162,23 +151,9 @@ namespace Naif.Blog.Controllers
         {
             return CheckSecurity(userName, password, () =>
             {
-                List<object> list = new List<object>();
+                var posts = _postRepository.GetAllPosts(blogId).Take(numberOfPosts);
 
-                foreach (var post in _postRepository.GetAllPosts(blogId).Take(numberOfPosts))
-                {
-                    var info = new
-                    {
-                        description = post.Content,
-                        title = post.Title,
-                        dateCreated = post.PubDate,
-                        wp_slug = post.Slug,
-                        postid = post.PostId
-                    };
-
-                    list.Add(info);
-                }
-
-                return new XmlRpcResult(list.ToArray());
+                return new XmlRpcResult(posts);
             });
         }
 

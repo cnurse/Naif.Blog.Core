@@ -13,6 +13,8 @@ namespace Naif.Blog.Models
         {
             PostId = Guid.NewGuid().ToString();
 
+            CustomFields = new Dictionary<string, string>();
+
             Author = String.Empty;
             BlogId = String.Empty;
             Categories = new string[] { };
@@ -21,19 +23,18 @@ namespace Naif.Blog.Models
             IsPublished = false;
             Keywords = String.Empty;
             LastModified = DateTime.UtcNow;
+            Markdown = String.Empty;
             ParentPostId = String.Empty;
             PostType = PostType.Post;
             PubDate = DateTime.UtcNow;
             Slug = String.Empty;
+            SubTitle = String.Empty;
             Template = String.Empty;
             Title = String.Empty;
         }
         
         [XmlRpcProperty("postid")]
         public string PostId { get; set; }
-        
-        [XmlRpcProperty("author")]
-        public string Author { get; set; }
         
         [XmlRpcProperty("blogId")]
         public string BlogId { get; set; }
@@ -55,12 +56,6 @@ namespace Naif.Blog.Models
         [XmlRpcProperty("dateModified")]
         public DateTime LastModified { get; set; }
 
-        [XmlRpcProperty("mt_parent")]
-        public string ParentPostId { get; set; }
-
-        [XmlRpcProperty("mt_posttype")]
-        public PostType PostType { get; set; }
-
         [XmlRpcProperty("dateCreated")]
         public DateTime PubDate { get; set; }
 
@@ -81,11 +76,52 @@ namespace Naif.Blog.Models
             }
         }
 
-        [Display(Name="Page Template")]
-        public string Template { get; set; }
-
         [Required]
         [XmlRpcProperty("title")]
         public string Title { get; set; }
+        
+        // - Custom Fields supported by Markdown Monster only
+        
+        [JsonIgnore]
+        public Dictionary<string, string> CustomFields { get; set; }
+
+        public string Author 
+        {
+            get => CustomFields["mt_author"];
+            set => CustomFields["mt_author"] = value;
+        }
+
+
+        public string Markdown
+        {
+            get => CustomFields["mt_markdown"];
+            set => CustomFields["mt_markdown"] = value;
+        }
+
+        public string ParentPostId
+        {
+            get => CustomFields["mt_parentpostid"];
+            set => CustomFields["mt_parentpostid"] = value;
+        }
+
+        public PostType PostType 
+        {
+            get => (PostType) Enum.Parse(typeof(PostType), CustomFields["mt_posttype"]);
+            set => CustomFields["mt_posttype"] = value.ToString();
+        }
+        
+        public string SubTitle 
+        {
+            get => CustomFields["mt_subtitle"];
+            set => CustomFields["mt_subtitle"] = value;
+        }
+
+        [Display(Name="Page Template")]
+        public string Template
+        {
+            get => CustomFields["mt_template"];
+            set => CustomFields["mt_template"] = value;
+        }
+        
     }
 }
