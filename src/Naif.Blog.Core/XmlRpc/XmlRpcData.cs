@@ -78,7 +78,9 @@ namespace Naif.Blog.XmlRpc
                     if (memberName == "custom_fields")
                     {
                         var propertyInfo = propertyInfos.Single(pi => pi.Name == "CustomFields");
-                        DeserializeCustomFields(propertyInfo, targetObject, member);
+
+                        var customFields = propertyInfo.GetValue(targetObject) as Dictionary<string, string>;
+                        DeserializeCustomFields(customFields, member);
                     }
                     else
                     {
@@ -107,9 +109,8 @@ namespace Naif.Blog.XmlRpc
             throw new ArgumentException(String.Format("The supplied XML-RPC value '{0}' is not recognised", dataType));
         }
 
-        private static void DeserializeCustomFields(PropertyInfo propertyInfo, object targetObject, XElement member)
+        private static void DeserializeCustomFields(Dictionary<string, string> customFields, XElement member)
         {
-            var customFields = new Dictionary<string, string>();
             var values = member.Element("value").Element("array").Element("data").Elements("value");
             foreach (var value in values)
             {
@@ -131,8 +132,6 @@ namespace Naif.Blog.XmlRpc
 
                 customFields[dictionaryKey] = dictionaryValue;
             }
-
-            propertyInfo.SetValue(targetObject, customFields, null);           
         }
 
         private static void SetPropertyValue(PropertyInfo propertyInfo, object targetObject, XElement member)
