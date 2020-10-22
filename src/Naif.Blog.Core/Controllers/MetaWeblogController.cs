@@ -130,6 +130,14 @@ namespace Naif.Blog.Controllers
                     match.Keywords = post.Keywords;
                     match.IsPublished = publish;
 
+                    //Custom Fields
+                    match.Author = post.Author;
+                    match.Markdown = post.Markdown;
+                    match.ParentPostId = post.ParentPostId;
+                    match.PostType = post.PostType;
+                    match.SubTitle = post.SubTitle;
+                    match.Template = post.Template;
+
                     _postRepository.SavePost(match);
                 }
 
