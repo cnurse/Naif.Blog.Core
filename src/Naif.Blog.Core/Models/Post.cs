@@ -87,37 +87,37 @@ namespace Naif.Blog.Models
 
         public string Author 
         {
-            get => CustomFields["mt_author"];
+            get => GetCustomField("mt_author");
             set => CustomFields["mt_author"] = value;
         }
 
         public string Markdown
         {
-            get => CustomFields["mt_markdown"];
+            get => GetCustomField("mt_markdown");
             set => CustomFields["mt_markdown"] = value;
         }
 
         public string ParentPostId
         {
-            get => CustomFields["mt_parentpostid"];
+            get => GetCustomField("mt_parentpostid");
             set => CustomFields["mt_parentpostid"] = value;
         }
 
         public PostType PostType 
         {
-            get => (PostType) Enum.Parse(typeof(PostType), CustomFields["mt_posttype"]);
+            get => (PostType) Enum.Parse(typeof(PostType), GetCustomField("mt_posttype", "Post"));
             set => CustomFields["mt_posttype"] = value.ToString();
         }
         
         public string PostTypeDetail
         {
-            get => CustomFields["mt_posttypedetail"];
+            get => GetCustomField("mt_posttypedetail");
             set => CustomFields["mt_posttypedetail"] = value;
         }
 
         public string RelatedPosts
         {
-            get => CustomFields["mt_related"];
+            get => GetCustomField("mt_related");
             set => CustomFields["mt_related"] = value;
         }
 
@@ -139,15 +139,26 @@ namespace Naif.Blog.Models
 
         public string SubTitle 
         {
-            get => CustomFields["mt_subtitle"];
+            get => GetCustomField("mt_subtitle");
             set => CustomFields["mt_subtitle"] = value;
         }
 
         [Display(Name="Page Template")]
         public string Template
         {
-            get => CustomFields["mt_template"];
+            get => GetCustomField("mt_template");
             set => CustomFields["mt_template"] = value;
+        }
+
+        private string GetCustomField(string field, string defaultValue = "")
+        {
+            var customField = defaultValue;
+            if (CustomFields.ContainsKey(field))
+            {
+                customField = CustomFields[field];
+            }
+
+            return customField;
         }
         
     }
