@@ -6,6 +6,7 @@
         Page = 1,
         Blog = 2,
         Category = 3,
-        Tag = 4
+        Tag = 4,
+        Url = 5
     }
 }
