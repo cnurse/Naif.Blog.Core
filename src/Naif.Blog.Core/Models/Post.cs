@@ -91,7 +91,6 @@ namespace Naif.Blog.Models
             set => CustomFields["mt_author"] = value;
         }
 
-
         public string Markdown
         {
             get => CustomFields["mt_markdown"];
@@ -110,6 +109,34 @@ namespace Naif.Blog.Models
             set => CustomFields["mt_posttype"] = value.ToString();
         }
         
+        public string PostTypeDetail
+        {
+            get => CustomFields["mt_posttypedetail"];
+            set => CustomFields["mt_posttypedetail"] = value;
+        }
+
+        public string RelatedPosts
+        {
+            get => CustomFields["mt_related"];
+            set => CustomFields["mt_related"] = value;
+        }
+
+        [JsonIgnore]
+        public List<string> Related
+        {
+            get
+            {
+                string relatedPosts = RelatedPosts;
+                List<string> posts = new List<string>();
+                if (!string.IsNullOrEmpty(relatedPosts))
+                {
+                    posts.AddRange(relatedPosts.Split(',').Select(post => post.Trim()));
+                }
+                return posts;
+            }
+            set => RelatedPosts = string.Join(',', value);
+        }
+
         public string SubTitle 
         {
             get => CustomFields["mt_subtitle"];
