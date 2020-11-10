@@ -135,6 +135,8 @@ namespace Naif.Blog.Controllers
                     match.Markdown = post.Markdown;
                     match.ParentPostId = post.ParentPostId;
                     match.PostType = post.PostType;
+                    match.PostTypeDetail = post.PostTypeDetail;
+                    match.RelatedPosts = post.RelatedPosts;
                     match.SubTitle = post.SubTitle;
                     match.Template = post.Template;
 
