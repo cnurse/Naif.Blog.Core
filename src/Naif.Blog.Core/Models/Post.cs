@@ -34,15 +34,10 @@ namespace Naif.Blog.Models
             Title = String.Empty;
         }
 
-        public static Func<Post, bool> SearchPredicate()
-        {
-            Func<Post, bool> predicate = p => (p.PostType == PostType.Post || p.PostType == PostType.Page)
-                                              && p.IncludeInLists 
-                                              && p.IsPublished 
-                                              && p.PubDate <= DateTime.UtcNow;
-
-            return predicate;
-        }
+        public static readonly Func<Post, bool> SearchPredicate = p => (p.PostType == PostType.Post || p.PostType == PostType.Page)
+                                                                       && p.IncludeInLists 
+                                                                       && p.IsPublished 
+                                                                       && p.PubDate <= DateTime.UtcNow;
         
         [XmlRpcProperty("postid")]
         public string PostId { get; set; }
