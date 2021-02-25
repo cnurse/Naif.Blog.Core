@@ -132,6 +132,7 @@ namespace Naif.Blog.Controllers
 
                     //Custom Fields
                     match.Author = post.Author;
+                    match.IncludeInLists = post.IncludeInLists;
                     match.Markdown = post.Markdown;
                     match.ParentPostId = post.ParentPostId;
                     match.PostType = post.PostType;
