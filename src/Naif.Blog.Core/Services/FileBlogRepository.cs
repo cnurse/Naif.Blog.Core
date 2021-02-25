@@ -65,7 +65,7 @@ namespace Naif.Blog.Services
 
         public Dictionary<string, int> GetCategories(string blogId)
         {
-            var result = _postRepository.GetAllPosts(blogId).Where(p => ((p.PostType == PostType.Post && p.IsPublished && p.PubDate <= DateTime.UtcNow)))
+            var result = _postRepository.GetAllPosts(blogId).Where(Post.SearchPredicate())
                 .SelectMany(post => post.Categories)
                 .GroupBy(category => category, (category, items) => new { Category = category, Count = items.Count() })
                 .OrderBy(x => x.Category)
@@ -76,7 +76,7 @@ namespace Naif.Blog.Services
 
         public Dictionary<string, int> GetTags(string blogId)
         {
-            var result = _postRepository.GetAllPosts(blogId).Where(p => ((p.PostType == PostType.Post && p.IsPublished && p.PubDate <= DateTime.UtcNow)))
+            var result = _postRepository.GetAllPosts(blogId).Where(Post.SearchPredicate())
                 .SelectMany(post => post.Tags)
                 .GroupBy(tag => tag, (tag, items) => new { Tag = tag, Count = items.Count() })
                 .OrderBy(x => x.Tag)

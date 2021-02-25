@@ -20,6 +20,7 @@ namespace Naif.Blog.Models
             Categories = new string[] { };
             Content = String.Empty;
             Excerpt = String.Empty;
+            IncludeInLists = true;
             IsPublished = false;
             Keywords = String.Empty;
             LastModified = DateTime.UtcNow;
@@ -31,6 +32,16 @@ namespace Naif.Blog.Models
             SubTitle = String.Empty;
             Template = String.Empty;
             Title = String.Empty;
+        }
+
+        public static Func<Post, bool> SearchPredicate()
+        {
+            Func<Post, bool> predicate = p => (p.PostType == PostType.Post || p.PostType == PostType.Page)
+                                              && p.IncludeInLists 
+                                              && p.IsPublished 
+                                              && p.PubDate <= DateTime.UtcNow;
+
+            return predicate;
         }
         
         [XmlRpcProperty("postid")]
@@ -89,6 +100,12 @@ namespace Naif.Blog.Models
         {
             get => GetCustomField("mt_author");
             set => CustomFields["mt_author"] = value;
+        }
+
+        public bool IncludeInLists
+        {
+            get => bool.Parse(GetCustomField("mt_includeinlists"));
+            set => CustomFields["mt_includeinlists"] = value.ToString();
         }
 
         public string Markdown
