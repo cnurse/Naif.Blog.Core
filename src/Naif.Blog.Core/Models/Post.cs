@@ -172,6 +172,5 @@ namespace Naif.Blog.Models
 
             return customField;
         }
-        
     }
 }

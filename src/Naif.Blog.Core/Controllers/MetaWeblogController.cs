@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using Naif.Blog.Security;
+// ReSharper disable UnusedParameter.Local
 
 namespace Naif.Blog.Controllers
 {

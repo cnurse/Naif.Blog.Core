@@ -1,6 +1,4 @@
 using System.IO;
-using System.Threading;
-using System.Xml;
 using System.Xml.Linq;
 using Naif.Blog.Models;
 using Naif.Blog.XmlRpc;
