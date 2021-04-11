@@ -9,16 +9,6 @@ namespace Naif.Blog.Controllers
 {
     public abstract class BaseController : Controller
     {
-        protected BaseController(IBlogRepository blogRepository, IBlogContext blogContext)
-        {
-            Blog = blogContext.CurrentBlog;
-            BlogRepository = blogRepository;
-        }
-
-        protected Models.Blog Blog { get; }
-
-        protected IBlogRepository BlogRepository { get; set; }
-
         protected string CreateSlug(string title)
         {
             title = title.ToLowerInvariant().Replace(" ", "-");

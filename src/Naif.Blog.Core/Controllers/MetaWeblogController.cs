@@ -19,18 +19,18 @@ namespace Naif.Blog.Controllers
     {
         private readonly IWebHostEnvironment _environment;
         private readonly XmlRpcSecurityOptions _securityOptions;
-        private readonly IPostRepository _postRepository;
-
+        private readonly IBlogManager _blogManager;
+        private readonly IBlogContext _blogContext;
+        
         public MetaWeblogController(IWebHostEnvironment environment,
-            IBlogRepository blogRepository, 
-            IBlogContext blogContext, 
-            IPostRepository postRepository, 
+            IBlogContext blogContext,
+            IBlogManager blogManager,
             IOptions<XmlRpcSecurityOptions> optionsAccessor) 
-            :base(blogRepository, blogContext)
         {
             _environment = environment;
             _securityOptions = optionsAccessor.Value;
-            _postRepository = postRepository;
+            _blogContext = blogContext;
+            _blogManager = blogManager;
         }
 
         public IActionResult Index()
@@ -79,14 +79,14 @@ namespace Naif.Blog.Controllers
         {
             return CheckSecurity(userName, password, () =>
             {
-
-                var blogUrl = (_environment.IsDevelopment()) ? Blog.LocalUrl : Blog.Url;
+                var blog = _blogContext.CurrentBlog;
+                var blogUrl = (_environment.IsDevelopment()) ? blog.LocalUrl : blog.Url;
                 var blogs = new[]
                 {
                     new
                     {
-                        blogid = Blog.Id,
-                        blogName = Blog.Title,
+                        blogid = blog.Id,
+                        blogName = blog.Title,
                         url = $"http://{blogUrl}"  
                     }
                 };
@@ -98,12 +98,13 @@ namespace Naif.Blog.Controllers
         {
             return CheckSecurity(userName, password, () =>
             {
-                Post post = _postRepository.GetAllPosts(Blog.Id).FirstOrDefault(p => p.PostId == postId);
+                var blog = _blogContext.CurrentBlog;
+                Post post = _blogManager.GetPost(blog.Id, p => p.PostId == postId);
 
                 if (post != null)
                 {
-                    post.BlogId = Blog.Id;
-                    _postRepository.DeletePost(post);
+                    post.BlogId = blog.Id;
+                    _blogManager.DeletePost(post);
                 }
 
                 return new XmlRpcResult(post != null);
@@ -114,7 +115,8 @@ namespace Naif.Blog.Controllers
         {
             return CheckSecurity(userName, password, () =>
             {
-                Post match = _postRepository.GetAllPosts(Blog.Id).FirstOrDefault(p => p.PostId == postId);
+                var blog = _blogContext.CurrentBlog;
+                Post match = _blogManager.GetPost(blog.Id, p => p.PostId == postId);
 
                 if (match != null)
                 {
@@ -142,7 +144,7 @@ namespace Naif.Blog.Controllers
                     match.SubTitle = post.SubTitle;
                     match.Template = post.Template;
 
-                    _postRepository.SavePost(match);
+                    _blogManager.SavePost(match);
                 }
 
                 return new XmlRpcResult(match != null);
@@ -153,7 +155,8 @@ namespace Naif.Blog.Controllers
         {
             return CheckSecurity(userName, password, () =>
             {
-                var post = _postRepository.GetAllPosts(Blog.Id).FirstOrDefault(p => p.PostId == postId);
+                var blog = _blogContext.CurrentBlog;
+                var post = _blogManager.GetPost(blog.Id, p => p.PostId == postId);
 
                 return new XmlRpcResult(post);
             });
@@ -163,7 +166,7 @@ namespace Naif.Blog.Controllers
         {
             return CheckSecurity(userName, password, () =>
             {
-                var posts = _postRepository.GetAllPosts(blogId).Take(numberOfPosts);
+                var posts = _blogManager.GetRecentPosts(blogId, numberOfPosts);
 
                 return new XmlRpcResult(posts);
             });
@@ -192,7 +195,7 @@ namespace Naif.Blog.Controllers
 
                 post.IsPublished = publish;
                 post.BlogId = blogId;
-                _postRepository.SavePost(post);
+                _blogManager.SavePost(post);
 
                 return new XmlRpcResult(post.PostId);
             });
@@ -203,7 +206,7 @@ namespace Naif.Blog.Controllers
             return CheckSecurity(userName, password, () =>
             {
 
-                var categories = BlogRepository.GetCategories(blogId);
+                var categories = _blogManager.GetCategories(blogId, -1);
 
                 var list = new List<object>();
 
@@ -221,7 +224,7 @@ namespace Naif.Blog.Controllers
             return CheckSecurity(userName, password, () =>
             {
 
-                string relative = BlogRepository.SaveMedia(blogId, media);
+                string relative = _blogManager.SaveMedia(blogId, media);
 
                 return new XmlRpcResult(new {url = $"{Request.Scheme}://{Request.Host}{relative}"});
             });
