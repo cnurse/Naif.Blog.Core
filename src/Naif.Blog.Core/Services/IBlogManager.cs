@@ -45,6 +45,14 @@ namespace Naif.Blog.Services
         IEnumerable<Post> GetPosts(string blogId, Func<Post, bool> predicate);
 
         /// <summary>
+        /// Gets the Tags with the highest number of posts
+        /// </summary>
+        /// <param name="blogId">The Id of the blog</param>
+        /// <param name="count">The maximum number of tags to return</param>
+        /// <returns>A dictionary of tags</returns>
+        Dictionary<string, int> GetTags(string blogId, int count);
+
+        /// <summary>
         /// Save a media object
         /// </summary>
         /// <param name="blogId">The Id of the blog</param>
