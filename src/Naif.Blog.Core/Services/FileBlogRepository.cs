@@ -14,7 +14,7 @@ using Newtonsoft.Json;
 
 namespace Naif.Blog.Services
 {
-    public abstract class FileBlogRepository : FileRepositoryBase, IBlogRepository
+    public class FileBlogRepository : FileRepositoryBase, IBlogRepository
     {
         private string _blogsCacheKey = "blogs";
         private readonly string _blogsFile;
@@ -40,6 +40,8 @@ namespace Naif.Blog.Services
             _themesFile = env.WebRootPath + @"\themes.json";
             _razorRuntimeCompilationOptions = optionsAccessor.Value;
         }
+
+        protected override string FileExtension { get; }
 
         public IEnumerable<Models.Blog> GetBlogs()
         {
@@ -179,6 +181,5 @@ namespace Naif.Blog.Services
 
             return String.Format(_fileUrl, blogId, fileName);
         }
-
     }
 }
