@@ -2,16 +2,16 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <metadata>
         <id>Naif.Blog.Core</id>
-        <version>2.2.0</version>
+        <version>3.0.0-alpha.1</version>
         <authors>Charles Nurse</authors>
         <title>Naif.Blog.Core</title>
-        <description>This package core blogging components for use in the Naif.Blog family of projects</description>
+        <description>This package contains core blogging components for use in the Naif.Blog family of projects</description>
         <copyright>Charles Nurse</copyright>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <license type="expression">MIT</license>
         <projectUrl>https://github.com/cnurse/Naif.Blog.Core</projectUrl>
         <repository>https://github.com/cnurse/Naif.Blog.Core</repository>
-        <summary>This package core blogging components for use in the Naif.Blog family of projects</summary>
+        <summary>This package contains core blogging components for use in the Naif.Blog family of projects</summary>
         <dependencies>
             <group targetFramework="net5.0">
                 <dependency id="Microsoft.AspNetCore.Mvc" version="2.2.0" exclude="Build,Analyzers" />
