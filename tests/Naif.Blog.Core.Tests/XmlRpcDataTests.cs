@@ -1,6 +1,10 @@
+using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Xml.Linq;
 using Naif.Blog.Models;
+using Naif.Blog.Models.Entities;
+using Naif.Blog.Models.Extensions;
 using Naif.Blog.XmlRpc;
 using NUnit.Framework;
 
@@ -20,7 +24,11 @@ namespace Naif.Blog.Core.Tests
             var post = new Post
             {
                 BlogId = "testblog",
-                Categories = new [] {"General", "Home"},
+                Categories = new List<Category>
+                {
+                    new() { Name = "General"},
+                    new() { Name = "Home"}
+                },
                 Content = "testcontent",
                 Excerpt = "excerpt",
                 Template = "template",
@@ -28,7 +36,7 @@ namespace Naif.Blog.Core.Tests
                 Title = "title"
             };
             
-            var result = new XmlRpcResult(post);
+            var result = new XmlRpcResult(post.ToXmlRpcPost());
             
             Assert.AreEqual("content", result.Content);
             
@@ -41,7 +49,11 @@ namespace Naif.Blog.Core.Tests
             var post = new Post
             {
                 Author = "Author",
-                Categories = new [] {"General", "Home"},
+                Categories = new List<Category>
+                {
+                    new() { Name = "General"},
+                    new() { Name = "Home"}
+                },
                 Content = "testcontent",
                 Excerpt = "excerpt",
                 SubTitle = "subtitle",
@@ -49,15 +61,18 @@ namespace Naif.Blog.Core.Tests
                 Title = "title"
             };
             
-            var result = new XmlRpcResult(post);
+            var result = new XmlRpcResult(post.ToXmlRpcPost());
             
             TextReader tr = new StringReader(result.Content);
             XDocument doc = XDocument.Load(tr);
             XElement value = doc.Element("methodResponse").Element("params").Element("param").Element("value");
 
-            var actualPost = XmlRpcData.DeserializeValue(value, typeof(Post)) as Post;
+            var xmlRpcPost = XmlRpcData.DeserializeValue(value, typeof(XmlRpcPost)) as XmlRpcPost;
+            var actualPost = xmlRpcPost.ToPost(String.Empty);
 
-            Assert.AreEqual(post.Categories, actualPost.Categories);
+            Assert.AreEqual(post.Categories.Count, actualPost.Categories.Count);
+            Assert.AreEqual(post.Categories[0].Name, actualPost.Categories[0].Name);
+            Assert.AreEqual(post.Categories[1].Name, actualPost.Categories[1].Name);
             Assert.AreEqual(post.Content, actualPost.Content);
             Assert.AreEqual(post.Excerpt, actualPost.Excerpt);
             Assert.AreEqual(post.SubTitle, actualPost.SubTitle);

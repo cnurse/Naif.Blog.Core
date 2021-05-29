@@ -63,28 +63,29 @@ namespace Naif.Blog.Services
                 });
         }
 
-        public Dictionary<string, int> GetCategories(string blogId)
+        public IList<Category> GetCategories(string blogId)
         {
             var result = _postRepository.GetAllPosts(blogId).Where(Post.SearchPredicate)
                 .SelectMany(post => post.Categories)
-                .GroupBy(category => category, (category, items) => new { Category = category, Count = items.Count() })
-                .OrderBy(x => x.Category)
-                .ToDictionary(x => x.Category, x => x.Count);
+                .GroupBy(category => category.Name, (categoryName, items) => new Category { Name = categoryName, Count = items.Count() })
+                .OrderBy(x => x.Name)
+                .ToList();
 
             return result;
         }
 
-        public Dictionary<string, int> GetTags(string blogId)
+        public IList<Tag> GetTags(string blogId)
         {
             var result = _postRepository.GetAllPosts(blogId).Where(Post.SearchPredicate)
                 .SelectMany(post => post.Tags)
-                .GroupBy(tag => tag, (tag, items) => new { Tag = tag, Count = items.Count() })
-                .OrderBy(x => x.Tag)
-                .ToDictionary(x => x.Tag, x => x.Count);
+                .GroupBy(tag => tag.Name, (tagName, items) => new Tag { Name = tagName, Count = items.Count() })
+                .OrderBy(x => x.Name)
+                .ToList();
 
             return result;
         }
 
+        /*
         public IEnumerable<string> GetTemplates(string blogId)
         {
             return MemoryCache.GetObject(_templatesCacheKey, 
@@ -150,6 +151,7 @@ namespace Naif.Blog.Services
 
             Logger.LogInformation($"{_blogsCacheKey} cleared.");
         }
+        */
         
         public string SaveMedia(string blogId, MediaObject media)
         {

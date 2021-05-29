@@ -1,9 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using Naif.Blog.XmlRpc;
 using Newtonsoft.Json;
+
+// ReSharper disable MemberCanBePrivate.Global
+// ReSharper disable UnusedAutoPropertyAccessor.Global
+// ReSharper disable StringLiteralTypo
 
 namespace Naif.Blog.Models
 {
@@ -12,26 +17,26 @@ namespace Naif.Blog.Models
         public Post()
         {
             PostId = Guid.NewGuid().ToString();
-
-            CustomFields = new Dictionary<string, string>();
-
-            Author = String.Empty;
             BlogId = String.Empty;
-            Categories = new string[] { };
-            Content = String.Empty;
+            Title = String.Empty;
+            SubTitle = String.Empty;
+            Author = String.Empty;
             Excerpt = String.Empty;
-            IncludeInLists = true;
+            Content = String.Empty;
             IsPublished = false;
-            Keywords = String.Empty;
+            PubDate = DateTime.UtcNow;
             LastModified = DateTime.UtcNow;
+            Slug = String.Empty;
+
+            Categories = new List<Category>();
+            Tags = new List<Tag>();
+            
+            IncludeInLists = true;
             Markdown = String.Empty;
             ParentPostId = String.Empty;
             PostType = PostType.Post;
-            PubDate = DateTime.UtcNow;
-            Slug = String.Empty;
-            SubTitle = String.Empty;
+            PostTypeDetail = String.Empty;
             Template = String.Empty;
-            Title = String.Empty;
         }
 
         public static readonly Func<Post, bool> SearchPredicate = p => (p.PostType == PostType.Post || p.PostType == PostType.Page)
@@ -39,101 +44,51 @@ namespace Naif.Blog.Models
                                                                        && p.IsPublished 
                                                                        && p.PubDate <= DateTime.UtcNow;
         
-        [XmlRpcProperty("postid")]
         public string PostId { get; set; }
         
-        [XmlRpcProperty("blogId")]
-        public string BlogId { get; set; }
+        public string Title { get; set; }
 
-        [XmlRpcProperty("categories")]
-        public string[] Categories { get; set; }
+        public string SubTitle  { get; set; }
 
-        [XmlRpcProperty("description")]
-        public string Content { get; set; }
-        
-        [XmlRpcProperty("mt_excerpt")]
+        public string Author { get; set; }
+
         public string Excerpt { get; set; }
 
+        public string Content { get; set; }
+        
         public bool IsPublished { get; set; }
 
-        [XmlRpcProperty("mt_keywords")]
-        public string Keywords { get; set; }
-
-        [XmlRpcProperty("dateModified")]
-        public DateTime LastModified { get; set; }
-
-        [XmlRpcProperty("dateCreated")]
         public DateTime PubDate { get; set; }
 
-        [XmlRpcProperty("wp_slug")]
-        public string Slug { get; set; }
-        
-        [JsonIgnore]
-        public List<string> Tags
-        {
-            get
-            {
-                List<string> tags = new List<string>();
-                if (!string.IsNullOrEmpty(Keywords))
-                {
-                    tags.AddRange(Keywords.Split(',').Select(tag => tag.Trim()));
-                }
-                return tags;
-            }
-        }
+        public DateTime LastModified { get; set; }
 
-        [Required]
-        [XmlRpcProperty("title")]
-        public string Title { get; set; }
+        public string Slug { get; set; }
         
         // - Custom Fields supported by Markdown Monster only
         
-        [JsonIgnore]
-        public Dictionary<string, string> CustomFields { get; set; }
+        [NotMapped]
+        public bool IncludeInLists { get; set; }
 
-        public string Author 
-        {
-            get => GetCustomField("mt_author");
-            set => CustomFields["mt_author"] = value;
-        }
+        [NotMapped]
+        public string Markdown { get; set; }
 
-        public bool IncludeInLists
-        {
-            get => bool.Parse(GetCustomField("mt_includeinlists"));
-            set => CustomFields["mt_includeinlists"] = value.ToString();
-        }
+        [NotMapped]
+        public string ParentPostId { get; set; }
 
-        public string Markdown
-        {
-            get => GetCustomField("mt_markdown");
-            set => CustomFields["mt_markdown"] = value;
-        }
-
-        public string ParentPostId
-        {
-            get => GetCustomField("mt_parentpostid");
-            set => CustomFields["mt_parentpostid"] = value;
-        }
-
-        public PostType PostType 
-        {
-            get => (PostType) Enum.Parse(typeof(PostType), GetCustomField("mt_posttype", "Post"));
-            set => CustomFields["mt_posttype"] = value.ToString();
-        }
+        [NotMapped]
+        public PostType PostType  { get; set; }
         
-        public string PostTypeDetail
-        {
-            get => GetCustomField("mt_posttypedetail");
-            set => CustomFields["mt_posttypedetail"] = value;
-        }
+        [NotMapped]
+        public string PostTypeDetail { get; set; }
 
-        public string RelatedPosts
-        {
-            get => GetCustomField("mt_related");
-            set => CustomFields["mt_related"] = value;
-        }
+        [NotMapped]
+        public string Template { get; set; }
+
+        /*[NotMapped]
+        public IList<Post> RelatedPosts { get; set; }
 
         [JsonIgnore]
+        [NotMapped]
         public List<string> Related
         {
             get
@@ -147,30 +102,16 @@ namespace Naif.Blog.Models
                 return posts;
             }
             set => RelatedPosts = string.Join(',', value);
-        }
+        }*/
+        
+        //Relationships
+        
+        public string BlogId { get; set; }
 
-        public string SubTitle 
-        {
-            get => GetCustomField("mt_subtitle");
-            set => CustomFields["mt_subtitle"] = value;
-        }
+        public Blog Blog { get; set; }
+        
+        public IList<Category> Categories { get; set; }
 
-        [Display(Name="Page Template")]
-        public string Template
-        {
-            get => GetCustomField("mt_template");
-            set => CustomFields["mt_template"] = value;
-        }
-
-        private string GetCustomField(string field, string defaultValue = "")
-        {
-            var customField = defaultValue;
-            if (CustomFields.ContainsKey(field))
-            {
-                customField = CustomFields[field];
-            }
-
-            return customField;
-        }
+        public IList<Tag> Tags { get; set; }
     }
 }

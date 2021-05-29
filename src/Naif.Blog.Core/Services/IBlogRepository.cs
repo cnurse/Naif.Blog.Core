@@ -7,15 +7,15 @@ namespace Naif.Blog.Services
     {
         IEnumerable<Models.Blog> GetBlogs();
 
-        Dictionary<string, int> GetCategories(string blogId);
+        IList<Category> GetCategories(string blogId);
 
-        Dictionary<string, int> GetTags(string blogId);
+        IList<Tag> GetTags(string blogId);
 
+        /*
         IEnumerable<string> GetTemplates(string blogId);
-
         IEnumerable<string> GetThemes();
-
         void SaveBlogs(IEnumerable<Models.Blog> blogs);
+        */
 
         string SaveMedia(string blogid, MediaObject media);
     }

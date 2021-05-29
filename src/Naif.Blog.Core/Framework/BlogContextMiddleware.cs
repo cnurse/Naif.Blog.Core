@@ -35,6 +35,12 @@ namespace Naif.Blog.Framework
             {
                 blogContext.CurrentBlog = blogContext.Blogs.SingleOrDefault(b => b.Url == context.Request.Host.Value);
             }
+
+            //Eagerly load the Categories and Tags
+            string blogId = blogContext.CurrentBlog.Id;
+            blogContext.CurrentBlog.Categories = _blogRepository.GetCategories(blogId);
+            blogContext.CurrentBlog.Tags = _blogRepository.GetTags(blogId);
+
             await _next.Invoke(context);
         }
     }

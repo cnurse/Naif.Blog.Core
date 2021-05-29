@@ -3,6 +3,8 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.AspNetCore.Hosting;
 using System.IO;
+using Naif.Blog.Models.Entities;
+using Naif.Blog.Models.Extensions;
 using Newtonsoft.Json;
 // ReSharper disable ClassNeverInstantiated.Global
 
@@ -19,22 +21,23 @@ namespace Naif.Blog.Services
 
         protected override Post GetPost(string file, string blogId)
         {
-            Post post;
+            JsonPost jsonPost;
             using (StreamReader r = File.OpenText(file))
             {
                 string json = r.ReadToEnd();
-                post =  JsonConvert.DeserializeObject<Post>(json);
-                post.BlogId = blogId;
+                jsonPost =  JsonConvert.DeserializeObject<JsonPost>(json);
+                jsonPost.BlogId = blogId;
             }
-            return post;
+            return jsonPost.ToPost();
         }
 
         protected override void SavePost(Post post, string file)
         {
+            JsonPost jsonPost = post.ToJsonPost();
             using (StreamWriter w = File.CreateText(file))
             {
                 JsonSerializer serializer = new JsonSerializer();
-                serializer.Serialize(w, post);
+                serializer.Serialize(w, jsonPost);
             }
         }
     }

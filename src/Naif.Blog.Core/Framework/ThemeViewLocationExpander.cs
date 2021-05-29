@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc.Razor;
+// ReSharper disable UsePatternMatching
 
 namespace Naif.Blog.Framework
 {

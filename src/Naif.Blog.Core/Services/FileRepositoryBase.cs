@@ -96,8 +96,8 @@ namespace Naif.Blog.Services
             MemoryCache.Remove(cacheKey);
 
             Logger.LogInformation(!File.Exists(file)
-                ? $"New Page - {id} created."
-                : $"Page - {id} updated.");
+                ? $"New Post - {id} created."
+                : $"Post - {id} updated.");
 
             Logger.LogInformation($"{cacheKey} cleared.");
         }

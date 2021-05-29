@@ -4,37 +4,37 @@
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Xml.Linq;
-using Naif.Blog.Models;
+using Naif.Blog.Models.Entities;
+// ReSharper disable UsePatternMatching
 
 namespace Naif.Blog.XmlRpc
 {
     public class XmlRpcResult : ContentResult
     {
-        public XmlRpcResult(Post post)
+        internal XmlRpcResult(XmlRpcPost xmlRpcPost)
         {
             var info = new
             {
-                description = post.Content,
-                title = post.Title,
-                dateCreated = post.PubDate,
-                wp_slug = post.Slug,
-                categories = post.Categories.ToArray(),
-                mt_keywords = post.Keywords,
-                postid = post.PostId,
-                mt_excerpt = post.Excerpt,
-                custom_fields = post.CustomFields
+                description = xmlRpcPost.Content,
+                title = xmlRpcPost.Title,
+                dateCreated = xmlRpcPost.PubDate,
+                wp_slug = xmlRpcPost.Slug,
+                categories = xmlRpcPost.Categories,
+                mt_keywords = xmlRpcPost.Keywords,
+                postid = xmlRpcPost.PostId,
+                mt_excerpt = xmlRpcPost.Excerpt,
+                custom_fields = xmlRpcPost.CustomFields
             };            
 
             Initialize(info);
         }
 
-        public XmlRpcResult(IEnumerable<Post> posts)
+        internal XmlRpcResult(IEnumerable<XmlRpcPost> xmlRpcPosts)
         {
             List<object> list = new List<object>();
 
-            foreach (var post in posts)
+            foreach (var post in xmlRpcPosts)
             {
                 var info = new
                 {
@@ -51,7 +51,7 @@ namespace Naif.Blog.XmlRpc
             Initialize(list.ToArray());
         }
         
-        public XmlRpcResult(object data)
+        internal XmlRpcResult(object data)
         {
             Initialize(data);
         }

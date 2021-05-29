@@ -5,12 +5,15 @@ using Naif.Blog.Services;
 using Naif.Blog.XmlRpc;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
+using Naif.Blog.Models.Entities;
+using Naif.Blog.Models.Extensions;
 using Naif.Blog.Security;
 // ReSharper disable UnusedParameter.Local
+// ReSharper disable PossibleNullReferenceException
+// ReSharper disable ExpressionIsAlwaysNull
 
 namespace Naif.Blog.Controllers
 {
@@ -58,10 +61,10 @@ namespace Naif.Blog.Controllers
                     result = DeletePost(methodParams[0].ToString(), methodParams[1].ToString(), methodParams[2].ToString(), methodParams[3].ToString());
                     break;
                 case "editPost":
-                    result = EditPost(methodParams[0].ToString(), methodParams[1].ToString(), methodParams[2].ToString(), (Post)methodParams[3], (bool)methodParams[4]);
+                    result = EditPost(methodParams[0].ToString(), methodParams[1].ToString(), methodParams[2].ToString(), (XmlRpcPost)methodParams[3], (bool)methodParams[4]);
                     break;
                 case "newPost":
-                    result = NewPost(methodParams[0].ToString(), methodParams[1].ToString(), methodParams[2].ToString(), (Post)methodParams[3], (bool)methodParams[4]);
+                    result = NewPost(methodParams[0].ToString(), methodParams[1].ToString(), methodParams[2].ToString(), (XmlRpcPost)methodParams[3], (bool)methodParams[4]);
                     break;
                 case "newMediaObject":
                     result = NewMediaObject(methodParams[0].ToString(), methodParams[1].ToString(), methodParams[2].ToString(), (MediaObject)methodParams[3]);
@@ -111,7 +114,7 @@ namespace Naif.Blog.Controllers
             });
         }
 
-        private IActionResult EditPost(string postId, string userName, string password, Post post, bool publish)
+        private IActionResult EditPost(string postId, string userName, string password, XmlRpcPost xmlRpcPost, bool publish)
         {
             return CheckSecurity(userName, password, () =>
             {
@@ -120,29 +123,21 @@ namespace Naif.Blog.Controllers
 
                 if (match != null)
                 {
-                    match.Title = post.Title;
-                    match.Excerpt = post.Excerpt;
-                    match.Content = post.Content;
-
-                    if (!string.Equals(match.Slug, post.Slug, StringComparison.OrdinalIgnoreCase)  && !string.IsNullOrWhiteSpace(post.Slug))
+                    //Merge XmlRpcPost into matched Post
+                    xmlRpcPost.ToPost(match);
+                    
+                    if (!string.Equals(match.Slug, xmlRpcPost.Slug, StringComparison.OrdinalIgnoreCase)  && !string.IsNullOrWhiteSpace(xmlRpcPost.Slug))
                     {
-                        match.Slug = CreateSlug(post.Slug);
+                        match.Slug = CreateSlug(xmlRpcPost.Slug);
                     }
 
-                    match.Categories = post.Categories;
-                    match.Keywords = post.Keywords;
+                    match.LastModified = DateTime.UtcNow;
+                    
+                    if (publish && !match.IsPublished)
+                    {
+                        match.PubDate = DateTime.UtcNow;
+                    }
                     match.IsPublished = publish;
-
-                    //Custom Fields
-                    match.Author = post.Author;
-                    match.IncludeInLists = post.IncludeInLists;
-                    match.Markdown = post.Markdown;
-                    match.ParentPostId = post.ParentPostId;
-                    match.PostType = post.PostType;
-                    match.PostTypeDetail = post.PostTypeDetail;
-                    match.RelatedPosts = post.RelatedPosts;
-                    match.SubTitle = post.SubTitle;
-                    match.Template = post.Template;
 
                     _blogManager.SavePost(match);
                 }
@@ -158,7 +153,7 @@ namespace Naif.Blog.Controllers
                 var blog = _blogContext.CurrentBlog;
                 var post = _blogManager.GetPost(blog.Id, p => p.PostId == postId);
 
-                return new XmlRpcResult(post);
+                return new XmlRpcResult(post.ToXmlRpcPost());
             });
         }
 
@@ -168,17 +163,19 @@ namespace Naif.Blog.Controllers
             {
                 var posts = _blogManager.GetRecentPosts(blogId, numberOfPosts);
 
-                return new XmlRpcResult(posts);
+                return new XmlRpcResult(posts.ToXmlRpcPosts());
             });
         }
 
-        private IActionResult NewPost(string blogId, string userName, string password, Post post, bool publish)
+        private IActionResult NewPost(string blogId, string userName, string password, XmlRpcPost xmlRpcPost, bool publish)
         {
             return CheckSecurity(userName, password, () =>
             {
-
+                Post post = null;
                 try
                 {
+                    post = xmlRpcPost.ToPost(blogId);
+                    
                     if (!string.IsNullOrWhiteSpace(post.Slug))
                     {
                         post.Slug = CreateSlug(post.Slug);
@@ -193,8 +190,14 @@ namespace Naif.Blog.Controllers
                     return new XmlRpcResult(exc);
                 }
 
+                post.LastModified = DateTime.UtcNow;
+                
+                if (publish)
+                {
+                    post.PubDate = DateTime.UtcNow;
+                }
                 post.IsPublished = publish;
-                post.BlogId = blogId;
+
                 _blogManager.SavePost(post);
 
                 return new XmlRpcResult(post.PostId);
@@ -205,7 +208,6 @@ namespace Naif.Blog.Controllers
         {
             return CheckSecurity(userName, password, () =>
             {
-
                 var categories = _blogManager.GetCategories(blogId, -1);
 
                 var list = new List<object>();
@@ -223,7 +225,6 @@ namespace Naif.Blog.Controllers
         {
             return CheckSecurity(userName, password, () =>
             {
-
                 string relative = _blogManager.SaveMedia(blogId, media);
 
                 return new XmlRpcResult(new {url = $"{Request.Scheme}://{Request.Host}{relative}"});
