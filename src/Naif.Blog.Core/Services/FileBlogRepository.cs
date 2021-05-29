@@ -5,12 +5,11 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Caching.Memory;
 using System.IO;
 using System.Linq;
-using Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Naif.Core.Cache;
 using Newtonsoft.Json;
 // ReSharper disable ClassNeverInstantiated.Global
+// ReSharper disable UnassignedGetOnlyAutoProperty
 
 namespace Naif.Blog.Services
 {
@@ -21,13 +20,8 @@ namespace Naif.Blog.Services
         private readonly IPostRepository _postRepository;
         private readonly string _filesFolder;
         private readonly string _fileUrl;
-        private string _templatesCacheKey = "templates";
-        private string _themesCacheKey = "themes";
-        private readonly string _themesFile;
-        private readonly MvcRazorRuntimeCompilationOptions _razorRuntimeCompilationOptions;
         
         public FileBlogRepository(IWebHostEnvironment env, 
-                                    IOptions<MvcRazorRuntimeCompilationOptions> optionsAccessor,
                                     IMemoryCache memoryCache, 
                                     ILoggerFactory loggerFactory, 
                                     IPostRepository postRepository) :base(env, memoryCache)
@@ -37,8 +31,6 @@ namespace Naif.Blog.Services
             _filesFolder = "{0}/posts/{1}/files/";
             _fileUrl = "/posts/{0}/files/{1}";
             _blogsFile = env.WebRootPath + @"\blogs.json";
-            _themesFile = env.WebRootPath + @"\themes.json";
-            _razorRuntimeCompilationOptions = optionsAccessor.Value;
         }
 
         protected override string FileExtension { get; }
