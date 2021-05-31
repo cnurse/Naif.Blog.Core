@@ -4,6 +4,12 @@ namespace Naif.Blog.Models.Entities
 {
     internal class JsonPost
     {
+        public JsonPost()
+        {
+            Categories = Array.Empty<string>();
+            IncludeInLists = true;
+        }
+        
         public string PostId { get; set; }
         
         public string BlogId { get; set; }
