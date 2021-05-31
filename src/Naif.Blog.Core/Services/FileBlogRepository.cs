@@ -17,23 +17,25 @@ namespace Naif.Blog.Services
     {
         private string _blogsCacheKey = "blogs";
         private readonly string _blogsFile;
-        private readonly IPostRepository _postRepository;
         private readonly string _filesFolder;
         private readonly string _fileUrl;
         
         public FileBlogRepository(IWebHostEnvironment env, 
                                     IMemoryCache memoryCache, 
-                                    ILoggerFactory loggerFactory, 
-                                    IPostRepository postRepository) :base(env, memoryCache)
+                                    ILoggerFactory loggerFactory) :base(env, memoryCache)
         {
             Logger = loggerFactory.CreateLogger<FileBlogRepository>();
-            _postRepository = postRepository;
             _filesFolder = "{0}/posts/{1}/files/";
             _fileUrl = "/posts/{0}/files/{1}";
             _blogsFile = env.WebRootPath + @"\blogs.json";
         }
 
         protected override string FileExtension { get; }
+
+        public Models.Blog GetBlog(Func<Models.Blog, bool> predicate)
+        {
+            return GetBlogs().SingleOrDefault(predicate);
+        }
 
         public IEnumerable<Models.Blog> GetBlogs()
         {
@@ -55,96 +57,16 @@ namespace Naif.Blog.Services
                 });
         }
 
-        public IList<Category> GetCategories(string blogId)
+        public IEnumerable<Models.Blog> GetBlogs(Func<Models.Blog, bool> predicate)
         {
-            var result = _postRepository.GetAllPosts(blogId).Where(Post.SearchPredicate)
-                .SelectMany(post => post.Categories)
-                .GroupBy(category => category.Name, (categoryName, items) => new Category { Name = categoryName, Count = items.Count() })
-                .OrderBy(x => x.Name)
-                .ToList();
-
-            return result;
+            return GetBlogs().Where(predicate);
         }
 
-        public IList<Tag> GetTags(string blogId)
+        public void SaveBlog(Models.Blog blog)
         {
-            var result = _postRepository.GetAllPosts(blogId).Where(Post.SearchPredicate)
-                .SelectMany(post => post.Tags)
-                .GroupBy(tag => tag.Name, (tagName, items) => new Tag { Name = tagName, Count = items.Count() })
-                .OrderBy(x => x.Name)
-                .ToList();
-
-            return result;
+            throw new NotImplementedException();
         }
 
-        /*
-        public IEnumerable<string> GetTemplates(string blogId)
-        {
-            return MemoryCache.GetObject(_templatesCacheKey, 
-                Logger,
-                new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromHours(2)),
-                () =>
-                {
-                    IList<string> templates = new List<string>();
-
-                    var blog = GetBlogs().SingleOrDefault(b => b.Id == blogId);
-
-                    if (blog != null)
-                    {
-
-                        foreach (var fileProvider in _razorRuntimeCompilationOptions.FileProviders)
-                        {
-                            var files = fileProvider.GetDirectoryContents($"/Views/Themes/{blog.Theme}/Templates");
-                            if (files.Exists)
-                            {
-                                foreach (var file in files)
-                                {
-                                    templates.Add(file.Name.Replace(".cshtml", ""));
-                                }
-                            }
-                        }
-                    }
-
-                    return templates;
-                });
-        }
-
-        public IEnumerable<string> GetThemes()
-        {
-            return MemoryCache.GetObject(_themesCacheKey, 
-                Logger,
-                new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromHours(2)),
-                () =>
-                {
-                    IList<string> themes;
-
-                    // fetch the value from the source
-                    using (StreamReader reader = File.OpenText(_themesFile))
-                    {
-                        var json = reader.ReadToEnd();
-                        themes = JsonConvert.DeserializeObject<IList<string>>(json);
-                    }
-
-                    return themes;
-                });
-        }
-
-        public void SaveBlogs(IEnumerable<Models.Blog> blogs)
-        {
-            using (StreamWriter w = File.CreateText(_blogsFile))
-            {
-                JsonSerializer serializer = new JsonSerializer();
-                serializer.Serialize(w, blogs);
-            }
-            
-            MemoryCache.Remove(_blogsCacheKey);
-
-            Logger.LogInformation($"Blog Settings updated.");
-
-            Logger.LogInformation($"{_blogsCacheKey} cleared.");
-        }
-        */
-        
         public string SaveMedia(string blogId, MediaObject media)
         {
             var filesFolder = GetFolder(_filesFolder, blogId);

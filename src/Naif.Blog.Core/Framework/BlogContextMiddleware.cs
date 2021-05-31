@@ -15,31 +15,25 @@ namespace Naif.Blog.Framework
     public class BlogContextMiddleware
     {
         private readonly RequestDelegate _next;
-        private readonly IBlogRepository _blogRepository;
+        private readonly IBlogManager _blogManager;
 
         public BlogContextMiddleware(RequestDelegate next, 
-                                    IBlogRepository blogRepository)
+                                    IBlogManager blogManager)
         {
             _next = next;
-            _blogRepository = blogRepository;
+            _blogManager = blogManager;
         }
 
         public async Task InvokeAsync(HttpContext context, IBlogContext blogContext)
         {
-            blogContext.Blogs = _blogRepository.GetBlogs();
             if (context.Request.IsLocal())
             {
-                blogContext.CurrentBlog = blogContext.Blogs.SingleOrDefault(b => b.LocalUrl == context.Request.Host.Value);
+                blogContext.Blog = _blogManager.GetBlog(b => b.LocalUrl == context.Request.Host.Value, true);
             }
             else
             {
-                blogContext.CurrentBlog = blogContext.Blogs.SingleOrDefault(b => b.Url == context.Request.Host.Value);
+                blogContext.Blog = _blogManager.GetBlog(b => b.Url == context.Request.Host.Value, true);
             }
-
-            //Eagerly load the Categories and Tags
-            string blogId = blogContext.CurrentBlog.Id;
-            blogContext.CurrentBlog.Categories = _blogRepository.GetCategories(blogId);
-            blogContext.CurrentBlog.Tags = _blogRepository.GetTags(blogId);
 
             await _next.Invoke(context);
         }

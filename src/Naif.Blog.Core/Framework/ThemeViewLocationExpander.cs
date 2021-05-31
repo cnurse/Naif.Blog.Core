@@ -23,9 +23,9 @@ namespace Naif.Blog.Framework
             var blogContext = context.ActionContext.HttpContext.RequestServices
                         .GetService(typeof(IBlogContext)) as IBlogContext;
 
-            if (blogContext != null && !string.IsNullOrEmpty(blogContext.CurrentBlog.Theme))
+            if (blogContext != null && !string.IsNullOrEmpty(blogContext.Blog.Theme))
             {
-                context.Values["theme"] = blogContext.CurrentBlog.Theme;
+                context.Values["theme"] = blogContext.Blog.Theme;
             }
         }
     }
