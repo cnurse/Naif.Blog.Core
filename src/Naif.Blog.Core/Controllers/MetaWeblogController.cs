@@ -208,13 +208,13 @@ namespace Naif.Blog.Controllers
         {
             return CheckSecurity(userName, password, () =>
             {
-                var categories = _blogManager.GetCategories(blogId, -1);
+                var categories = _blogContext.Blog.Categories;
 
                 var list = new List<object>();
 
-                foreach (string category in categories.Keys)
+                foreach (var category in categories)
                 {
-                    list.Add(new {title = category});
+                    list.Add(new {title = category.Name});
                 }
 
                 return new XmlRpcResult(list.ToArray());

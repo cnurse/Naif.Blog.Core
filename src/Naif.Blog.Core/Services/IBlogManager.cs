@@ -25,14 +25,6 @@ namespace Naif.Blog.Services
         void DeletePost(Post post);
 
         /// <summary>
-        /// Gets the Categories with the highest number of posts
-        /// </summary>
-        /// <param name="blogId">The Id of the blog</param>
-        /// <param name="count">The maximum number of categories to return</param>
-        /// <returns>A dictionary of categoreis</returns>
-        Dictionary<string, int> GetCategories(string blogId, int count);
-
-        /// <summary>
         /// Gets a single post
         /// </summary>
         /// <param name="blogId">The Id of the blog</param>
@@ -55,14 +47,6 @@ namespace Naif.Blog.Services
         /// <param name="predicate">A predicate used to search for the specific posts</param>
         /// <returns>An enumerable list of posts</returns>
         IEnumerable<Post> GetPosts(string blogId, Func<Post, bool> predicate);
-
-        /// <summary>
-        /// Gets the Tags with the highest number of posts
-        /// </summary>
-        /// <param name="blogId">The Id of the blog</param>
-        /// <param name="count">The maximum number of tags to return</param>
-        /// <returns>A dictionary of tags</returns>
-        Dictionary<string, int> GetTags(string blogId, int count);
 
         /// <summary>
         /// Save a media object
