@@ -49,7 +49,7 @@ namespace Naif.Blog.Framework
                     
                     foreach (var xmlParam in xmlParams)
                     {
-                        Type type = (method == "editPost" || method == "newPost") ? Type.GetType("Naif.Blog.Models.Post") :
+                        Type type = (method == "editPost" || method == "newPost") ? Type.GetType("Naif.Blog.Models.Entities.XmlRpcPost") :
                             (method == "newMediaObject") ? Type.GetType("Naif.Blog.Models.MediaObject") : null;
                         
                         methodParams.Add(XmlRpcData.DeserializeValue(xmlParam.Element("value"), type));
