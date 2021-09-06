@@ -1,9 +1,11 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Newtonsoft.Json;
+
+// ReSharper disable MemberCanBePrivate.Global
+// ReSharper disable UnusedAutoPropertyAccessor.Global
+// ReSharper disable ClassNeverInstantiated.Global
 
 namespace Naif.Blog.Models
 {
@@ -15,7 +17,7 @@ namespace Naif.Blog.Models
             Disclaimer = String.Empty;
             GoogleAnalytics = String.Empty;
             HomeRedirectUrl = String.Empty;
-            Id = String.Empty;
+            BlogId = String.Empty;
             LocalUrl = String.Empty;
             OwnerId = -1;
             Theme = String.Empty;
@@ -23,7 +25,7 @@ namespace Naif.Blog.Models
             Url = String.Empty;
         }
         
-        public string Id { get; set; }
+        public string BlogId { get; set; }
 
         public string ByLine { get; set; }
 

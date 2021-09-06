@@ -88,7 +88,7 @@ namespace Naif.Blog.Controllers
                 {
                     new
                     {
-                        blogid = blog.Id,
+                        blogid = blog.BlogId,
                         blogName = blog.Title,
                         url = $"http://{blogUrl}"  
                     }
@@ -102,11 +102,11 @@ namespace Naif.Blog.Controllers
             return CheckSecurity(userName, password, () =>
             {
                 var blog = _blogContext.Blog;
-                Post post = _blogManager.GetPost(blog.Id, p => p.PostId == postId);
+                Post post = _blogManager.GetPost(blog.BlogId, p => p.PostId == postId);
 
                 if (post != null)
                 {
-                    post.BlogId = blog.Id;
+                    post.BlogId = blog.BlogId;
                     _blogManager.DeletePost(post);
                 }
 
@@ -119,7 +119,7 @@ namespace Naif.Blog.Controllers
             return CheckSecurity(userName, password, () =>
             {
                 var blog = _blogContext.Blog;
-                Post match = _blogManager.GetPost(blog.Id, p => p.PostId == postId);
+                Post match = _blogManager.GetPost(blog.BlogId, p => p.PostId == postId);
 
                 if (match != null)
                 {
@@ -151,7 +151,7 @@ namespace Naif.Blog.Controllers
             return CheckSecurity(userName, password, () =>
             {
                 var blog = _blogContext.Blog;
-                var post = _blogManager.GetPost(blog.Id, p => p.PostId == postId);
+                var post = _blogManager.GetPost(blog.BlogId, p => p.PostId == postId);
 
                 return new XmlRpcResult(post.ToXmlRpcPost());
             });
