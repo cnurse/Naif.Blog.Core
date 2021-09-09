@@ -3,8 +3,8 @@
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
     <RootNamespace>Naif.Blog</RootNamespace>
-    <ProductVersion>3.0.1</ProductVersion>
-    <FileVersion>3.0.1.0</FileVersion>
+    <ProductVersion>3.0.2</ProductVersion>
+    <FileVersion>3.0.2.0</FileVersion>
     <NuspecFile>$(MSBuildProjectName).nuspec</NuspecFile>
   </PropertyGroup>
 

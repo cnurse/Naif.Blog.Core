@@ -80,21 +80,27 @@ namespace Naif.Blog.Models.Extensions
             }
 
             post.Categories = new List<Category>();
-            foreach (var category in xmlRpcPost.Categories)
+            if (xmlRpcPost.Categories != null)
             {
-                post.Categories.Add(new Category()
+                foreach (var category in xmlRpcPost.Categories)
                 {
-                    Name = category
-                });
+                    post.Categories.Add(new Category()
+                    {
+                        Name = category
+                    });
+                }
             }
 
             post.Tags = new List<Tag>();
-            foreach (var tag in xmlRpcPost.Keywords.Split(','))
+            if (!String.IsNullOrEmpty(xmlRpcPost.Keywords))
             {
-                post.Tags.Add(new Tag()
+                foreach (var tag in xmlRpcPost.Keywords.Split(','))
                 {
-                    Name = tag
-                });
+                    post.Tags.Add(new Tag()
+                    {
+                        Name = tag
+                    });
+                }
             }
 
             //Custom Fields
