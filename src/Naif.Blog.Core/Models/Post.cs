@@ -29,6 +29,7 @@ namespace Naif.Blog.Models
             
             IncludeInLists = true;
             Markdown = String.Empty;
+            PageOrder = 0;
             ParentPostId = String.Empty;
             PostType = PostType.Post;
             PostTypeDetail = String.Empty;
@@ -68,6 +69,9 @@ namespace Naif.Blog.Models
         [NotMapped]
         public string Markdown { get; set; }
 
+        [NotMapped]
+        public int PageOrder { get; set; }
+        
         [NotMapped]
         public string ParentPostId { get; set; }
 

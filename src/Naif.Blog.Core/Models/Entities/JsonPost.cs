@@ -39,6 +39,8 @@ namespace Naif.Blog.Models.Entities
         public bool IncludeInLists { get; set; }
 
         public string Markdown { get; set; }
+        
+        public int PageOrder { get; set; }
 
         public string ParentPostId { get; set; }
 

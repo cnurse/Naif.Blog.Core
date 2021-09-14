@@ -42,6 +42,7 @@ namespace Naif.Blog.Models.Extensions
                     ["mt_author"] = post.Author,
                     ["mt_includeinlists"] = post.IncludeInLists.ToString(),
                     ["mt_markdown"] = post.Markdown,
+                    ["mt_pageOrder"] = post.PageOrder. ToString(),
                     ["mt_parentpostid"] = post.ParentPostId,
                     ["mt_posttype"] = post.PostType.ToString(),
                     ["mt_posttypedetail"] = post.PostTypeDetail,
@@ -49,8 +50,6 @@ namespace Naif.Blog.Models.Extensions
                     ["mt_template"] = post.Template
                 }
             };
-
-
 
             //xmlRpcPost.CustomFields["mt_related"] = post.RelatedPosts;
 
@@ -107,6 +106,7 @@ namespace Naif.Blog.Models.Extensions
             post.Author = xmlRpcPost.GetCustomField("mt_author");
             post.IncludeInLists = bool.Parse(xmlRpcPost.GetCustomField("mt_includeinlists"));
             post.Markdown = xmlRpcPost.GetCustomField("mt_markdown");
+            post.PageOrder = int.Parse(xmlRpcPost.GetCustomField("mt_pageOrder"));
             post.ParentPostId = xmlRpcPost.GetCustomField("mt_parentpostid");
             post.PostType = (PostType) Enum.Parse(typeof(PostType),xmlRpcPost.GetCustomField("mt_posttype", "Post"));
             post.PostTypeDetail = xmlRpcPost.GetCustomField("mt_posttypedetail");

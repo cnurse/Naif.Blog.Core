@@ -7,6 +7,7 @@
         Blog = 2,
         Category = 3,
         Tag = 4,
-        Url = 5
+        Url = 5,
+        Spacer = 6
     }
 }
