@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using Naif.Auth0.Models;
 using Naif.Blog.Services;
 using Naif.Core.Http;
 
@@ -35,6 +37,18 @@ namespace Naif.Blog.Framework
                 blogContext.Blog = _blogManager.GetBlog(b => b.Url == context.Request.Host.Value, true);
             }
 
+            var user = context.User;
+
+            if (user != null)
+            {
+                blogContext.User = new Profile
+                {
+                    Name = user.Identity.Name,
+                    EmailAddress = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value,
+                    ProfileImage = user.Claims.FirstOrDefault(c => c.Type == "picture")?.Value
+                };
+            }
+            
             await _next.Invoke(context);
         }
     }
