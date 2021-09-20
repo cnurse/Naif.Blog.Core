@@ -49,6 +49,12 @@ namespace Naif.Blog.Services
         IEnumerable<Post> GetPosts(string blogId, Func<Post, bool> predicate);
 
         /// <summary>
+        /// Save a blog
+        /// </summary>
+        /// <param name="blog">The blog to save</param>
+        void SaveBlog(Models.Blog blog);
+        
+        /// <summary>
         /// Save a media object
         /// </summary>
         /// <param name="blogId">The Id of the blog</param>

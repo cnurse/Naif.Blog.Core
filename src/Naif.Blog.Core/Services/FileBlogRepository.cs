@@ -64,7 +64,28 @@ namespace Naif.Blog.Services
 
         public void SaveBlog(Models.Blog blog)
         {
-            throw new NotImplementedException();
+            var blogs = GetBlogs();
+            var match = blogs.SingleOrDefault(b => b.UniqueId == blog.UniqueId);
+            if (match != null)
+            {
+                match.BlogId = blog.BlogId;
+                match.ByLine = blog.ByLine;
+                match.Disclaimer = blog.Disclaimer;
+                match.GoogleAnalytics = blog.GoogleAnalytics;
+                match.HomeRedirectUrl = blog.HomeRedirectUrl;
+                match.LocalUrl = blog.LocalUrl;
+                match.Theme = blog.Theme;
+                match.Title = blog.Title;
+                match.Url = blog.Url;
+            }
+            
+            using (StreamWriter w = File.CreateText(_blogsFile))
+            {
+                JsonSerializer serializer = new JsonSerializer();
+                serializer.Serialize(w, blogs);
+            }
+
+            MemoryCache.Remove(_blogsCacheKey);
         }
 
         public string SaveMedia(string blogId, MediaObject media)

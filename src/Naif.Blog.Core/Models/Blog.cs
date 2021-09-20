@@ -13,6 +13,7 @@ namespace Naif.Blog.Models
     {
         public Blog()
         {
+            UniqueId = Guid.NewGuid().ToString();
             ByLine = String.Empty;
             Disclaimer = String.Empty;
             GoogleAnalytics = String.Empty;
@@ -40,6 +41,8 @@ namespace Naif.Blog.Models
 
         public string Title { get; set; }
 
+        public string UniqueId { get; set; }
+        
         [NotMapped]
         public string GoogleAnalytics { get; set; }
         
@@ -51,13 +54,15 @@ namespace Naif.Blog.Models
         
         [NotMapped]
         public string Theme { get; set; }
-
+        
         [NotMapped]
         public string Url { get; set; }
         
         //Relationships
+        [JsonIgnore]
         public IList<Category> Categories { get; set; }
 
+        [JsonIgnore]
         public IList<Tag> Tags { get; set; }
     }
 }
