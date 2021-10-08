@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
@@ -22,9 +23,9 @@ namespace Naif.Blog.Authentication
 		    }
 	    }
 
-	    private static void SetAuth0Options(OpenIdConnectOptions options, TenantOptions tenantOptions, string tenant)
+	    private static void SetAuth0Options(OpenIdConnectOptions options, Dictionary<string,TenantOptions> tenantOptions, string tenant)
 	    {
-		    var auth0Options = tenantOptions.Auth0[tenant];
+		    var auth0Options = tenantOptions[tenant].Auth0;
 		    
 		    // Set the authority to your Auth0 domain
 		    options.Authority = $"https://{auth0Options.Domain}";
@@ -57,7 +58,7 @@ namespace Naif.Blog.Authentication
 		    };
 	    }
 
-        public static void AddAuth0(this IServiceCollection services, TenantOptions tenantOptions)
+        public static void AddAuth0(this IServiceCollection services, Dictionary<string,TenantOptions> tenantOptions)
         {
 	        services.Configure<CookiePolicyOptions>(options =>
 	        {

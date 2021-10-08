@@ -6,6 +6,6 @@ namespace Naif.Blog.Framework
 {
     public class TenantOptions
     {
-        public Dictionary<string, Auth0Options> Auth0 { get; set; }
+        public Auth0Options Auth0 { get; set; }
     }
 }
