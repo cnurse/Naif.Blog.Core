@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using Naif.Auth0.Models;
+using Naif.Blog.Models;
 using Naif.Blog.Services;
 using Naif.Core.Http;
 

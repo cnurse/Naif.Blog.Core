@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using Naif.Auth0.Models;
+﻿using Naif.Blog.Models;
 
 namespace Naif.Blog.Framework
 {
