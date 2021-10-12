@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <metadata>
         <id>Naif.Blog.Core</id>
-        <version>3.1.0-beta.10</version>
+        <version>3.1.0-beta.11</version>
         <authors>Charles Nurse</authors>
         <title>Naif.Blog.Core</title>
         <description>This package contains core blogging components for use in the Naif.Blog family of projects</description>
@@ -16,7 +16,7 @@
             <group targetFramework="net5.0">
                 <dependency id="Microsoft.AspNetCore.Mvc" version="2.2.0" exclude="Build,Analyzers" />
                 <dependency id="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" version="5.0.1" exclude="Build,Analyzers" />
-                <dependency id="Microsoft.AspNetCore.Authentication.OpenIdConnect" version="5.0.10" exclude="Build,Analyzers" />
+                <dependency id="Microsoft.AspNetCore.Authentication.OpenIdConnect" version="5.0.11" exclude="Build,Analyzers" />
                 <dependency id="Naif.Core" version="3.3.0-beta.4" exclude="Build,Analyzers" />
             </group>
         </dependencies>
