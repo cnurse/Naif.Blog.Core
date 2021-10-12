@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -24,10 +25,16 @@ namespace Naif.Auth0.Controllers
         [Route("Login")]
         public async Task Login(string returnUrl = "/")
         {
-            await HttpContext.ChallengeAsync("Auth0", new AuthenticationProperties()
+            var tenant = _blogContext.Blog.BlogId;
+
+            var properties = new AuthenticationProperties() {RedirectUri = "/"};
+
+            if (!String.IsNullOrEmpty(tenant))
             {
-                RedirectUri = returnUrl
-            });
+                properties.Items.Add("tenant", tenant);
+            }
+
+            await HttpContext.ChallengeAsync("Auth0", properties);
         }
         
         [Authorize]
@@ -36,14 +43,15 @@ namespace Naif.Auth0.Controllers
         {
             var tenant = _blogContext.Blog.BlogId;
             var options = _tenantOptions[tenant].Auth0;
-            
-            await HttpContext.SignOutAsync("Auth0", new AuthenticationProperties
+
+            var properties = new AuthenticationProperties() {RedirectUri = options.LogoutRedirectUrl};
+
+            if (!String.IsNullOrEmpty(tenant))
             {
-                // Indicate here where Auth0 should redirect the user after a logout.
-                // Note that the resulting absolute Uri must be whitelisted in the 
-                // **Allowed Logout URLs** settings for the app.
-                RedirectUri = options.LogoutRedirectUrl
-            });
+                properties.Items.Add("tenant", tenant);
+            }
+
+            await HttpContext.SignOutAsync("Auth0", properties);
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
         }
     }
