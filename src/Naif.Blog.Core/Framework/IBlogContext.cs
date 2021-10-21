@@ -1,4 +1,5 @@
 ﻿using Naif.Blog.Models;
+using Naif.Core.Models;
 
 namespace Naif.Blog.Framework
 {
@@ -6,6 +7,6 @@ namespace Naif.Blog.Framework
     {
         Models.Blog Blog { get; set; }
         
-        Profile User { get; set; }
+        User User { get; set; }
     }
 }

@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Naif.Blog.Models;
 using Naif.Blog.Services;
 using Naif.Core.Http;
+using Naif.Core.Models;
 
 namespace Naif.Blog.Framework
 {
@@ -41,12 +42,18 @@ namespace Naif.Blog.Framework
 
             if (user != null)
             {
-                blogContext.User = new Profile
+                blogContext.User = new User
                 {
                     Name = user.Identity.Name,
                     EmailAddress = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value,
+                    IsAuthenticated = user.Identity.IsAuthenticated,
                     ProfileImage = user.Claims.FirstOrDefault(c => c.Type == "picture")?.Value
                 };
+                
+                foreach (var claim in user.Claims.Where(item => item.Type == "https://schemas.naifblog.com/roles"))
+                {
+                    blogContext.User.Roles.Add(new Role {Name = claim.Value });
+                }
             }
             
             await _next.Invoke(context);
