@@ -16,7 +16,7 @@
             <group targetFramework="net5.0">
                 <dependency id="Microsoft.AspNetCore.Mvc" version="2.2.0" exclude="Build,Analyzers" />
                 <dependency id="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" version="5.0.1" exclude="Build,Analyzers" />
-                <dependency id="Naif.Core" version="3.3.0-beta.4" exclude="Build,Analyzers" />
+                <dependency id="Naif.Core" version="3.3.1-beta.1" exclude="Build,Analyzers" />
             </group>
         </dependencies>
     </metadata>
