@@ -36,6 +36,8 @@ namespace Naif.Blog.ViewModels
 
         public PostType PostType { get; set; }
 
+        public string PostTypeDetail { get; set; }
+        
         public string ParentPostId { get; set; }
 
         public int PageOrder { get; set; }

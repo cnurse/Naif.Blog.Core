@@ -24,6 +24,7 @@ namespace Naif.Blog.ViewModels
                 IncludeInLists = post.IncludeInLists,
                 IsPublished = post.IsPublished,
                 PostType = post.PostType,
+                PostTypeDetail = post.PostTypeDetail,
                 ParentPostId = post.ParentPostId,
                 PageOrder = post.PageOrder
             };
@@ -59,6 +60,7 @@ namespace Naif.Blog.ViewModels
             post.IncludeInLists = postViewModel.IncludeInLists;
             post.IsPublished = postViewModel.IsPublished;
             post.PostType = postViewModel.PostType;
+            post.PostTypeDetail = postViewModel.PostTypeDetail;
             post.ParentPostId = postViewModel.ParentPostId;
             post.PageOrder = postViewModel.PageOrder;
 
