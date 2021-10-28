@@ -65,14 +65,17 @@ namespace Naif.Blog.ViewModels
             post.PageOrder = postViewModel.PageOrder;
 
             post.Categories = new List<Category>();
-            foreach (var category in postViewModel.Categories.TrimStart('[').TrimEnd(']').Split(new[] { ',' }))
+            if (!string.IsNullOrEmpty(postViewModel.Categories))
             {
-                if (!String.IsNullOrEmpty(category))
+                foreach (var category in postViewModel.Categories.TrimStart('[').TrimEnd(']').Split(new[] { ',' }))
                 {
-                    post.Categories.Add(new Category()
+                    if (!String.IsNullOrEmpty(category))
                     {
-                        Name = category
-                    });
+                        post.Categories.Add(new Category()
+                        {
+                            Name = category
+                        });
+                    }
                 }
             }
 
