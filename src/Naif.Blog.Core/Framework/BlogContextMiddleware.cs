@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using System;
+using Microsoft.AspNetCore.Http;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -42,12 +43,26 @@ namespace Naif.Blog.Framework
 
             if (user != null)
             {
+                var emailVerified = user.Claims.FirstOrDefault(c => c.Type == "email_verified")?.Value;
+                var largePicture = user.Claims.FirstOrDefault(c => c.Type == "https://schemas.naifblog.com/created_at")?.Value;
+            
+                var created =  user.Claims.FirstOrDefault(c => c.Type == "https://schemas.naifblog.com/picture_large")?.Value;
+                var lastUpdated = user.Claims.FirstOrDefault(c => c.Type == "updated_at")?.Value;
+
                 blogContext.User = new User
                 {
                     Name = user.Identity.Name,
                     EmailAddress = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value,
+                    EmailVerified = (emailVerified != null) && Boolean.Parse(emailVerified),
+                    GivenName = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.GivenName)?.Value,
+                    Identifier = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value,
                     IsAuthenticated = user.Identity.IsAuthenticated,
-                    ProfileImage = user.Claims.FirstOrDefault(c => c.Type == "picture")?.Value
+                    Locale = user.Claims.FirstOrDefault(c => c.Type == "locale")?.Value,
+                    NickName = user.Claims.FirstOrDefault(c => c.Type == "nickname")?.Value,
+                    ProfileImage = (!String.IsNullOrEmpty(largePicture)) ? largePicture : user.Claims.FirstOrDefault(c => c.Type == "picture")?.Value,
+                    Surname = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Surname)?.Value,
+                    Created = (created == null)  ? DateTime.MinValue : DateTime.Parse(created.Trim('"')),
+                    LastUpdated = (lastUpdated == null)  ? DateTime.MinValue : DateTime.Parse(lastUpdated.Trim('"'))
                 };
                 
                 foreach (var claim in user.Claims.Where(item => item.Type == "https://schemas.naifblog.com/roles"))
