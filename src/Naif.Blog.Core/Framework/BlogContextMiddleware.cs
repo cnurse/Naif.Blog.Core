@@ -44,9 +44,9 @@ namespace Naif.Blog.Framework
             if (user != null)
             {
                 var emailVerified = user.Claims.FirstOrDefault(c => c.Type == "email_verified")?.Value;
-                var largePicture = user.Claims.FirstOrDefault(c => c.Type == "https://schemas.naifblog.com/created_at")?.Value;
+                var largePicture = user.Claims.FirstOrDefault(c => c.Type == "https://schemas.naifblog.com/picture_large")?.Value;
             
-                var created =  user.Claims.FirstOrDefault(c => c.Type == "https://schemas.naifblog.com/picture_large")?.Value;
+                var created =  user.Claims.FirstOrDefault(c => c.Type == "https://schemas.naifblog.com/created_at")?.Value;
                 var lastUpdated = user.Claims.FirstOrDefault(c => c.Type == "updated_at")?.Value;
 
                 blogContext.User = new User
