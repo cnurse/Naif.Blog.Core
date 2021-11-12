@@ -27,7 +27,7 @@ namespace Naif.Blog.Services
             Logger = loggerFactory.CreateLogger<FileBlogRepository>();
             _filesFolder = "{0}/posts/{1}/files/";
             _fileUrl = "/posts/{0}/files/{1}";
-            _blogsFile = env.WebRootPath + @"\blogs.json";
+            _blogsFile = Path.Combine(env.WebRootPath,"blogs.json");
         }
 
         protected override string FileExtension { get; }
