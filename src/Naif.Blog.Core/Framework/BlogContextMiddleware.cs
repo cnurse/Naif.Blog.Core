@@ -51,7 +51,7 @@ namespace Naif.Blog.Framework
 
                 blogContext.User = new User
                 {
-                    Name = user.Identity.Name,
+                    Name = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value,
                     EmailAddress = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value,
                     EmailVerified = (emailVerified != null) && Boolean.Parse(emailVerified),
                     GivenName = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.GivenName)?.Value,

@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <metadata>
         <id>Naif.Blog.Core</id>
-        <version>3.2.0-alpha-1</version>
+        <version>3.2.0-alpha-2</version>
         <authors>Charles Nurse</authors>
         <title>Naif.Blog.Core</title>
         <description>This package contains core blogging components for use in the Naif.Blog family of projects</description>
