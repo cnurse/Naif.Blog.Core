@@ -4,7 +4,7 @@
     <TargetFramework>net6.0</TargetFramework>
     <RootNamespace>Naif.Blog</RootNamespace>
     <ProductVersion>3.2.0</ProductVersion>
-    <FileVersion>3.2.0.3</FileVersion>
+    <FileVersion>3.2.0.4</FileVersion>
     <NuspecFile>$(MSBuildProjectName).nuspec</NuspecFile>
     <LangVersion>latestmajor</LangVersion>
     <RepositoryUrl>https://github.com/cnurse/Naif.Blog.Core</RepositoryUrl>
@@ -13,7 +13,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="6.0.7" />
-    <PackageReference Include="Naif.Core" Version="3.3.2-alpha-1" />
+    <PackageReference Include="Naif.Core" Version="3.3.2" />
   </ItemGroup>
 
 </Project>
