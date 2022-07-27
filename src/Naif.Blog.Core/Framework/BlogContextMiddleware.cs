@@ -66,10 +66,15 @@ namespace Naif.Blog.Framework
                     LastUpdated = (lastUpdated == null)  ? DateTime.MinValue : DateTime.Parse(lastUpdated.Trim('"'))
                 };
 
+                //Parse MetaData
                 string metadata = user.Claims.FirstOrDefault(c => c.Type == "https://schemas.naifblog.com/meta_data")?.Value;
-                JObject metadataObject = JObject.Parse(metadata);
-                blogContext.User.Metadata = metadataObject.ToObject<Dictionary<string, string>>();
+                if (!String.IsNullOrEmpty(metadata))
+                {
+                    JObject metadataObject = JObject.Parse(metadata);
+                    blogContext.User.Metadata = metadataObject.ToObject<Dictionary<string, string>>();
+                }
                 
+                //Parse Roles
                 foreach (var claim in user.Claims.Where(item => item.Type == "https://schemas.naifblog.com/roles"))
                 {
                     blogContext.User.Roles.Add(new Role {Name = claim.Value });
