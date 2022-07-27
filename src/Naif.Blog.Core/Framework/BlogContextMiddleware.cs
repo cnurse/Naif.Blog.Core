@@ -1,12 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Http;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using Naif.Blog.Models;
 using Naif.Blog.Services;
 using Naif.Core.Http;
 using Naif.Core.Models;
+using Newtonsoft.Json.Linq;
 
 namespace Naif.Blog.Framework
 {
@@ -64,6 +65,10 @@ namespace Naif.Blog.Framework
                     Created = (created == null)  ? DateTime.MinValue : DateTime.Parse(created.Trim('"')),
                     LastUpdated = (lastUpdated == null)  ? DateTime.MinValue : DateTime.Parse(lastUpdated.Trim('"'))
                 };
+
+                string metadata = user.Claims.FirstOrDefault(c => c.Type == "https://schemas.naifblog.com/meta_data")?.Value;
+                JObject metadataObject = JObject.Parse(metadata);
+                blogContext.User.Metadata = metadataObject.ToObject<Dictionary<string, string>>();
                 
                 foreach (var claim in user.Claims.Where(item => item.Type == "https://schemas.naifblog.com/roles"))
                 {
