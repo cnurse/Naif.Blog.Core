@@ -3,8 +3,8 @@
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
     <RootNamespace>Naif.Blog</RootNamespace>
-    <ProductVersion>3.2.2-alpha.01</ProductVersion>
-    <FileVersion>3.2.2.1</FileVersion>
+    <ProductVersion>3.2.2-alpha-02</ProductVersion>
+    <FileVersion>3.2.2.2</FileVersion>
     <NuspecFile>$(MSBuildProjectName).nuspec</NuspecFile>
     <LangVersion>latestmajor</LangVersion>
     <RepositoryUrl>https://github.com/cnurse/Naif.Blog.Core</RepositoryUrl>
