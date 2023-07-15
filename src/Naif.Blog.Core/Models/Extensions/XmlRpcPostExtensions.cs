@@ -104,9 +104,9 @@ namespace Naif.Blog.Models.Extensions
 
             //Custom Fields
             post.Author = xmlRpcPost.GetCustomField("mt_author");
-            post.IncludeInLists = bool.Parse(xmlRpcPost.GetCustomField("mt_includeinlists"));
+            post.IncludeInLists = bool.Parse(xmlRpcPost.GetCustomField("mt_includeinlists", "false"));
             post.Markdown = xmlRpcPost.GetCustomField("mt_markdown");
-            post.PageOrder = int.Parse(xmlRpcPost.GetCustomField("mt_pageOrder"));
+            post.PageOrder = int.Parse(xmlRpcPost.GetCustomField("mt_pageOrder", "0"));
             post.ParentPostId = xmlRpcPost.GetCustomField("mt_parentpostid");
             post.PostType = (PostType) Enum.Parse(typeof(PostType),xmlRpcPost.GetCustomField("mt_posttype", "Post"));
             post.PostTypeDetail = xmlRpcPost.GetCustomField("mt_posttypedetail");
