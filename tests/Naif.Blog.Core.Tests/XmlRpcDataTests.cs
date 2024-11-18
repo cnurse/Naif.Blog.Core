@@ -38,7 +38,7 @@ namespace Naif.Blog.Core.Tests
             
             var result = new XmlRpcResult(post.ToXmlRpcPost());
             
-            Assert.AreEqual("content", result.Content);
+            Assert.That(result.Content, Is.EqualTo("content"));
             
             Assert.Pass();
         }
@@ -70,14 +70,14 @@ namespace Naif.Blog.Core.Tests
             var xmlRpcPost = XmlRpcData.DeserializeValue(value, typeof(XmlRpcPost)) as XmlRpcPost;
             var actualPost = xmlRpcPost.ToPost(String.Empty);
 
-            Assert.AreEqual(post.Categories.Count, actualPost.Categories.Count);
-            Assert.AreEqual(post.Categories[0].Name, actualPost.Categories[0].Name);
-            Assert.AreEqual(post.Categories[1].Name, actualPost.Categories[1].Name);
-            Assert.AreEqual(post.Content, actualPost.Content);
-            Assert.AreEqual(post.Excerpt, actualPost.Excerpt);
-            Assert.AreEqual(post.SubTitle, actualPost.SubTitle);
-            Assert.AreEqual(post.Template, actualPost.Template);
-            Assert.AreEqual(post.Title, actualPost.Title);
+            Assert.That(actualPost.Categories.Count, Is.EqualTo(post.Categories.Count));
+            Assert.That(actualPost.Categories[0].Name, Is.EqualTo(post.Categories[0].Name));
+            Assert.That(actualPost.Categories[1].Name, Is.EqualTo(post.Categories[1].Name));
+            Assert.That(actualPost.Content, Is.EqualTo(post.Content));
+            Assert.That(actualPost.Excerpt, Is.EqualTo(post.Excerpt));
+            Assert.That(actualPost.SubTitle, Is.EqualTo(post.SubTitle));
+            Assert.That(actualPost.Template, Is.EqualTo(post.Template));
+            Assert.That(actualPost.Title, Is.EqualTo(post.Title));
         }
     }
 }
